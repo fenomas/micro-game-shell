@@ -3,6 +3,8 @@
 
 A small game shell. Provides reliable timing events, and manages pointerlock/fullscreen/resize.
 
+[Live demo](https://andyhall.github.io/micro-game-shell/)
+
 This library provides two sets of timing events: `tick`, which can fire at any specified rate, and `render`, which fire as often as the browser redraws (but can be throttled to a lower rate).`
 
 The intention is that game clients can use these events to implement 
