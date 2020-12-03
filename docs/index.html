@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mini-game-shell</title>
+    <style>
+        body {
+            margin: 2em;
+            font: 18px Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        section {
+            display: inline-block;
+            vertical-align: top;
+            /* border: solid 1px; */
+        }
+
+        div {
+            margin: 2em;
+        }
+
+        label {
+            display: block;
+            margin: 0.3em;
+        }
+
+        span {
+            display: inline-block;
+            text-align: center;
+            width: 3.5em;
+            font: 18px monospace;
+        }
+
+        input[type="number"] {
+            text-align: center;
+            width: 4em;
+        }
+
+        .game {
+            width: 150px;
+            height: 150px;
+            margin: 2em;
+            background-color: lightgray;
+            text-align: center;
+            line-height: 150px;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        Game element:
+        <div class="game">Click</div>
+    </section>
+    <section>
+        Settings:
+        <div>
+            <label for="PL">Sticky pointerlock: <input id="PL" type="checkbox"></label>
+            <label for="FS">Sticky fullscreen: <input id="FS" type="checkbox"></label>
+            <br>
+            <label for="TR">Target tick rate: <input id="TR" type="number" value="30" min="0" max="120"> tick/s</label>
+            <label for="MRR">Max render rate: <input id="MRR" type="number" value="0" min="0" max="120"> fps</label>
+            <br>
+            Artificially waste time:
+            <label for="WTT">during tick: <input id="WTT" type="number" value="0" min="0" max="50"> ms</label>
+            <label for="WTR">during render: <input id="WTR" type="number" value="0" min="0" max="50"> ms</label>
+        </div>
+    </section>
+    <section>
+        Observed stats:
+        <div>
+            <label>Tick rate: <span id="OTR">2</span></sp> tps</label>
+            <label>Frame rate: <span id="OFR">2</span></sp> fps</label>
+        </div>
+    </section>
+    <script src="/bundle.js"></script>
+</body>
+
+</html>
