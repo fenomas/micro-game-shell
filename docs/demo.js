@@ -64,6 +64,7 @@ function setupInput(id, handler) {
 var tickTimer = makeTimer()
 var tickUpdate = 1
 shell.onTick = (dt) => {
+    tickOutput(dt)
     var rate = tickTimer()
     if (--tickUpdate === 0) {
         $('#OTR').textContent = Math.round(rate)
@@ -75,7 +76,8 @@ shell.onTick = (dt) => {
 
 var renderTimer = makeTimer()
 var renderUpdate = 1
-shell.onRender = (dt, framePart) => {
+shell.onRender = (dt, framePart, tickTime) => {
+    renderOutput(framePart, tickTime)
     var rate = renderTimer()
     if (--renderUpdate === 0) {
         $('#OFR').textContent = Math.round(rate)
@@ -87,6 +89,68 @@ shell.onRender = (dt, framePart) => {
 
 var debounce = rate => Math.ceil(rate / 5)
 
+
+
+/*
+ * 
+ *          visual timing check
+ * 
+*/
+
+var canvas = $('.output')
+var ctx = canvas.getContext('2d')
+var pos = 0
+var vel = 600
+var ypos = 0
+var yvel = 50
+var cw = canvas.width
+var ch = canvas.height
+var mode = 0
+canvas.onclick = () => { mode = (mode + 1) % 3 }
+
+function tickOutput(dt) {
+    pos += vel * dt / 1000
+    if (pos > cw) pos -= cw
+    ypos += yvel * dt / 1000
+    if (ypos > ch) ypos -= ch
+}
+
+var ct = 0
+var lx = 0
+function renderOutput(framePart, dt) {
+    var velPerTick = vel * dt / 1000
+    var x = (pos + framePart * velPerTick) % cw
+    var y = (ypos + framePart * (yvel * dt / 1000))
+    if (mode === 0) {
+        // ctx.clearRect(0, 0, cw, ch)
+        fade(1)
+        drawBox(x, 30, 40, 40)
+    } else if (mode === 1) {
+        fade(((ct++ % 10) === 0) ? 0.15 : 0.05)
+        var h = 30
+        drawBox(x, y, 2, h)
+        if (y > ch - h) drawBox(x, y - ch, 2, h)
+    } else {
+        var dx = x - lx
+        if (dx < -cw / 2) dx += cw
+        lx = x
+        fade(0.02)
+        ctx.globalCompositeOperation = 'copy'
+        ctx.drawImage(ctx.canvas, -dx, 0)
+        ctx.globalCompositeOperation = 'source-over'
+        drawBox(cw - 15, 10, 1, ch - 20)
+    }
+}
+
+var fade = (amt) => {
+    ctx.fillStyle = `rgba(255,255,255, ${amt})`
+    ctx.fillRect(0, 0, cw, ch)
+}
+
+var drawBox = (x, y, w, h) => {
+    ctx.fillStyle = 'red'
+    ctx.fillRect(x, y, w, h)
+}
 
 
 

@@ -50,8 +50,8 @@ Properties:
 
 Events:
 
- * `onTick(dt)` - tick event handler. `dt` is a fixed constant value (in ms), not the actual time elapsed.
- * `onRender(dt, framePart)` - render event handler. `dt` is actual time since the last render (in ms), and `framepart` is the fractional number of game ticks that have elapsed since the last tick. Note that if you're doing fixed timesteps correctly, you should find the latter argument more useful than the first.
+ * `onTick(tickTime)` - tick event handler. `tickTime` is a fixed constant value (in ms), not the actual time elapsed.
+ * `onRender(dt, framePart, tickTime)` - render event handler. `dt` is actual time since the last render (in ms), and `framepart` is the fractional number of game ticks (i.e. how far we are into the current tick).
 
  * `onInit()` - fires once, when shell is set up (after `DOMReady` if necessary)
  * `onResize()` - fires when dom element changes size

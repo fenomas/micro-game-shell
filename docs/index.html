@@ -45,6 +45,11 @@
             background-color: lightgray;
             text-align: center;
             line-height: 150px;
+            border: solid 1px
+        }
+
+        .output {
+            border: solid 1px
         }
     </style>
 </head>
@@ -74,6 +79,9 @@
             <label>Tick rate: <span id="OTR">2</span></sp> tps</label>
             <label>Frame rate: <span id="OFR">2</span></sp> fps</label>
         </div>
+    </section>
+    <section>
+        <canvas class="output" width="800" height="100" />
     </section>
     <script src="bundle.js"></script>
 </body>

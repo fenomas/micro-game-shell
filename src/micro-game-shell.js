@@ -54,27 +54,25 @@ export class MicroGameShell {
 */
 
 function setupTimers(shell, pollTime) {
-    var tickAccum = 0
+    var lastTick = 0
     var renderAccum = 0
-    var lastTick = nowObject.now()
-    var lastRender = lastTick
+    var rt = 0
 
     var intervalHandler = () => {
         var now = nowObject.now()
-        var dt = now - lastTick
-        lastTick = now
-        tickAccum += dt
         var tickDur = 1000 / shell.tickRate
-        if (tickAccum < tickDur) return
-        tickAccum = Math.min(tickAccum - tickDur, tickDur)
+        var nextTick = lastTick + tickDur
+        if (now < nextTick) return
+        // never fall more than one tick behind
+        lastTick = Math.max(now - tickDur, nextTick)
         shell.onTick(tickDur)
     }
 
     var frameHandler = () => {
         requestAnimationFrame(frameHandler)
         var now = nowObject.now()
-        var dt = now - lastRender
-        lastRender = now
+        var dt = now - rt
+        rt = now
         if (shell.maxRenderRate > 0) {
             renderAccum += dt
             var frameDur = 1000 / shell.maxRenderRate
@@ -83,7 +81,7 @@ function setupTimers(shell, pollTime) {
         }
         var tickDur = 1000 / shell.tickRate
         var framePart = (now - lastTick) / tickDur
-        shell.onRender(dt, framePart)
+        shell.onRender(dt, framePart, tickDur)
     }
 
     setInterval(intervalHandler, pollTime || 10)
