@@ -20,17 +20,24 @@ npm i --save micro-game-shell
 ```
 
 ```js
-import { MicroGameShell } from '..'
-var $ = document.querySelector.bind(document)
+import { MicroGameShell } from 'micro-game-shell'
 
+var $ = document.querySelector.bind(document)
 var domElement = $('.game-container')   // optional
-var pollRate = 10                       // optional, default 10ms
+var pollRate = 10                       // optional, default 10ms (0 disables polling)
+
+// instantiate
 var shell = new MicroGameShell(domElement, pollRate)
 
+// set settings
 shell.tickRate = 30               // ticks/second
 shell.maxRenderRate = 0           // 0 means uncapped
 shell.stickyPointerLock = true    // requests pointerLock on click
 shell.stickyFullscreen = false    // ditto for fullscreen
+
+// add event callbacks
+shell.onTick = (tickDur) => { /* ... */ }
+// see below for rest of events
 ```
 
 

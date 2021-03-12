@@ -1,6 +1,6 @@
 {
   "name": "micro-game-shell",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Minimal game shell: provides tick/render events, and manages pointerLock/fullscreen/resize",
   "main": "src/micro-game-shell.js",
   "files": ["/src"],

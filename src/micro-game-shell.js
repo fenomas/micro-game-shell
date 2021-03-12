@@ -1,6 +1,4 @@
 
-// single source of timing info
-var nowObject = performance || Date
 
 
 /*
@@ -54,39 +52,48 @@ export class MicroGameShell {
 */
 
 function setupTimers(shell, pollTime) {
-    var lastTick = 0
-    var renderAccum = 0
-    var rt = 0
+    shell._nowObject = performance || Date
+    shell._lastTick = 0
+    shell._renderAccum = 0
+    shell._rt = 0
 
-    var intervalHandler = () => {
-        var now = nowObject.now()
-        var tickDur = 1000 / shell.tickRate
-        var nextTick = lastTick + tickDur
-        if (now < nextTick) return
-        // never fall more than one tick behind
-        lastTick = Math.max(now - tickDur, nextTick)
-        shell.onTick(tickDur)
+    shell._frameCB = frameHandler.bind(null, shell)
+    requestAnimationFrame(shell._frameCB)
+    if (pollTime > 0) {
+        shell._intervalCB = intervalHandler.bind(null, shell)
+        shell._interval = setInterval(shell._intervalCB, pollTime)
     }
-
-    var frameHandler = () => {
-        requestAnimationFrame(frameHandler)
-        var now = nowObject.now()
-        var dt = now - rt
-        rt = now
-        if (shell.maxRenderRate > 0) {
-            renderAccum += dt
-            var frameDur = 1000 / shell.maxRenderRate
-            if (renderAccum < frameDur) return
-            renderAccum = Math.min(renderAccum - frameDur, frameDur)
-        }
-        var tickDur = 1000 / shell.tickRate
-        var framePart = (now - lastTick) / tickDur
-        shell.onRender(dt, framePart, tickDur)
-    }
-
-    setInterval(intervalHandler, pollTime || 10)
-    requestAnimationFrame(frameHandler)
 }
+
+
+function intervalHandler(shell) {
+    var now = shell._nowObject.now()
+    var tickDur = 1000 / shell.tickRate
+    var nextTick = shell._lastTick + tickDur
+    if (now < nextTick) return
+    // never fall more than one tick behind
+    shell._lastTick = Math.max(now - tickDur, nextTick)
+    shell.onTick(tickDur)
+}
+
+function frameHandler(shell) {
+    requestAnimationFrame(shell._frameCB)
+    intervalHandler(shell)
+    var now = shell._nowObject.now()
+    var dt = now - shell._rt
+    shell._rt = now
+    if (shell.maxRenderRate > 0) {
+        shell._renderAccum += dt
+        var frameDur = 1000 / shell.maxRenderRate
+        if (shell._renderAccum < frameDur) return
+        shell._renderAccum = Math.min(shell._renderAccum - frameDur, frameDur)
+    }
+    var tickDur = 1000 / shell.tickRate
+    var framePart = (now - shell._lastTick) / tickDur
+    shell.onRender(dt, framePart, tickDur)
+}
+
+
 
 
 

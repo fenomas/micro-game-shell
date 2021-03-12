@@ -24,6 +24,7 @@ module.exports = (env) => ({
 
     devServer: {
         contentBase: buildPath,
+        port: 8082,
         inline: true,
         host: "0.0.0.0",
         stats: "minimal",

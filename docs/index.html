@@ -41,11 +41,19 @@
         .game {
             width: 150px;
             height: 150px;
-            margin: 2em;
+            margin: 2em 2em 1em;
             background-color: lightgray;
             text-align: center;
             line-height: 150px;
             border: solid 1px
+        }
+
+        .spike {
+            margin: 0 2em;
+            padding: 10px;
+            border: solid 1px;
+            border-radius: 4px;
+            font-size: inherit;
         }
 
         .output {
@@ -58,6 +66,8 @@
     <section>
         Game element:
         <div class="game">Click</div>
+        <br>
+        <button class="spike">Lag spike</button>
     </section>
     <section>
         Settings:

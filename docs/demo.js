@@ -51,7 +51,10 @@ function setupInput(id, handler) {
 }
 
 
-
+$('.spike').onclick = function () {
+    var t = performance.now() + 500
+    while (performance.now() < t) { }
+}
 
 
 
@@ -63,8 +66,14 @@ function setupInput(id, handler) {
 
 var tickTimer = makeTimer()
 var tickUpdate = 1
-shell.onTick = (dt) => {
-    tickOutput(dt)
+var lastTick = 0
+shell.onTick = (tickTime) => {
+    if (log) {
+        var t = performance.now()
+        console.log('  tick', 'dt', t - lastTick, 'dur', tickTime)
+        lastTick = t
+    }
+    tickOutput(tickTime)
     var rate = tickTimer()
     if (--tickUpdate === 0) {
         $('#OTR').textContent = Math.round(rate)
@@ -77,6 +86,10 @@ shell.onTick = (dt) => {
 var renderTimer = makeTimer()
 var renderUpdate = 1
 shell.onRender = (dt, framePart, tickTime) => {
+    if (log) {
+        var msIn = framePart * tickTime
+        console.log('render', 'dt', dt, 'part', framePart, 'ms in:', msIn)
+    }
     renderOutput(framePart, tickTime)
     var rate = renderTimer()
     if (--renderUpdate === 0) {
@@ -88,6 +101,12 @@ shell.onRender = (dt, framePart, tickTime) => {
 }
 
 var debounce = rate => Math.ceil(rate / 5)
+
+
+var log = false
+document.addEventListener('keydown', ev => {
+    if (ev.key === 'p') log = !log
+})
 
 
 
