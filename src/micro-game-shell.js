@@ -11,7 +11,7 @@
 
 export class MicroGameShell {
 
-    constructor(domElement, pollTime = 10) {
+    constructor(domElement = null, pollTime = 10, skipFramesAfter = 100) {
         // settings
         this.stickyPointerLock = false
         this.stickyFullscreen = false
@@ -34,7 +34,7 @@ export class MicroGameShell {
 
         // init
         domReady(() => {
-            setupTimers(this, pollTime)
+            setupTimers(this, pollTime, skipFramesAfter)
             setupDomElement(this, domElement)
             this.onInit()
         })
@@ -51,11 +51,14 @@ export class MicroGameShell {
  * 
 */
 
-function setupTimers(shell, pollTime) {
+function setupTimers(shell, pollTime, skipFramesAfter) {
     shell._nowObject = performance || Date
-    shell._lastTick = 0
+    shell._skipFramesAfter = skipFramesAfter
     shell._renderAccum = 0
-    shell._rt = 0
+    // these are when the last tick/render _started_
+    var now = shell._nowObject.now()
+    shell._lastTick = now
+    shell._lastRender = now
 
     shell._frameCB = frameHandler.bind(null, shell)
     requestAnimationFrame(shell._frameCB)
@@ -68,20 +71,27 @@ function setupTimers(shell, pollTime) {
 
 function intervalHandler(shell) {
     var now = shell._nowObject.now()
+    var cutoffTime = now + shell._skipFramesAfter
     var tickDur = 1000 / shell.tickRate
-    var nextTick = shell._lastTick + tickDur
-    if (now < nextTick) return
-    // never fall more than one tick behind
-    shell._lastTick = Math.max(now - tickDur, nextTick)
-    shell.onTick(tickDur)
+    // tick until we're up to date
+    while (shell._lastTick + tickDur < now) {
+        shell.onTick(tickDur)
+        shell._lastTick += tickDur
+        now = shell._nowObject.now()
+        // skip frames if we've exceeded max processing time
+        if (now > cutoffTime) {
+            shell._lastTick = now
+            return
+        }
+    }
 }
 
 function frameHandler(shell) {
     requestAnimationFrame(shell._frameCB)
     intervalHandler(shell)
     var now = shell._nowObject.now()
-    var dt = now - shell._rt
-    shell._rt = now
+    var dt = now - shell._lastRender
+    shell._lastRender = now
     if (shell.maxRenderRate > 0) {
         shell._renderAccum += dt
         var frameDur = 1000 / shell.maxRenderRate

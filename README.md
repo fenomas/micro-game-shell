@@ -3,7 +3,7 @@
 
 A small game shell. Provides reliable timing events, and manages pointerlock/fullscreen/resize.
 
-[Live demo](https://andyhall.github.io/micro-game-shell/)
+[Live demo](https://fenomas.github.io/micro-game-shell/)
 
 This library provides two sets of timing events: `tick`, which can fire at any specified rate, and `render`, which fire as often as the browser redraws (but can be throttled to a lower rate).`
 
@@ -23,11 +23,12 @@ npm i --save micro-game-shell
 import { MicroGameShell } from 'micro-game-shell'
 
 var $ = document.querySelector.bind(document)
-var domElement = $('.game-container')   // optional
-var pollRate = 10                       // optional, default 10ms (0 disables polling)
+var domElement = $('#my-game')    // optional
+var pollRate = 10                 // optional, default 10ms
+var skipFramesAfter = 100         // optional, default 100ms
 
 // instantiate
-var shell = new MicroGameShell(domElement, pollRate)
+var shell = new MicroGameShell(domElement, pollRate, skipFramesAfter)
 
 // set settings
 shell.tickRate = 30               // ticks/second
@@ -42,6 +43,12 @@ shell.onTick = (tickDur) => { /* ... */ }
 
 
 ## API
+
+Options:
+
+ * `domElement` - a DOM element, for pointerLock/fullscreen
+ * `pollTime` (10ms) - how often to poll for the next tick. Passing in `0` will disable polling.
+ * `skipFramesAfter` (100ms) - max time to spend on tick events. If the shell spends this long on tick events and still hasn't caught up, it will skip any remaining frames.
 
 Settings:
 

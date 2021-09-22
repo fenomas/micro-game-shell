@@ -1,12 +1,13 @@
 {
   "name": "micro-game-shell",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Minimal game shell: provides tick/render events, and manages pointerLock/fullscreen/resize",
   "main": "src/micro-game-shell.js",
   "files": ["/src"],
+  "typings": "dist/src/micro-game-shell.d.ts",
   "scripts": {
     "start": "webpack serve",
-    "build": "webpack --env prod"
+    "build": "tsc; webpack --env prod"
   },
   "keywords": ["game", "shell", "html", "engine", "tick", "render"],
   "author": "andy (https://fenomas.com/)",
