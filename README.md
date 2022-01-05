@@ -59,8 +59,8 @@ Settings:
 
 Properties:
 
- * `pointerLock` - manage whether the DOM element has pointerlock
- * `fullscreen` - manage whether the DOM element has fullscreen
+ * `pointerLock` - check or set whether the DOM element has pointerlock
+ * `fullscreen` - check or set whether the DOM element has fullscreen
 
 Events:
 

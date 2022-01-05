@@ -119,6 +119,18 @@ function setupDomElement(shell, el) {
 
     var hasPL = false
     var hasFS = false
+    var setPL = (want) => {
+        if (!el.requestPointerLock) return
+        if (!!want === hasPL) return
+        if (want) { el.requestPointerLock() }
+        else { document.exitPointerLock() }
+    }
+    var setFS = (want) => {
+        if (!el.requestFullscreen) return
+        if (!!want === hasFS) return
+        if (want) { el.requestFullscreen() }
+        else { document.exitFullscreen() }
+    }
 
     // track whether we actually have PL/FS, and send events
     document.addEventListener('pointerlockchange', ev => {
@@ -134,34 +146,18 @@ function setupDomElement(shell, el) {
     // decorate shell with getter/setters that request FS/PL
     Object.defineProperty(shell, 'pointerLock', {
         get: () => hasPL,
-        set: (want) => {
-            if (want && !hasPL) {
-                el.requestPointerLock()
-            } else if (hasPL && !want) {
-                document.exitPointerLock()
-            }
-        }
+        set: setPL,
     })
     Object.defineProperty(shell, 'fullscreen', {
         get: () => hasFS,
-        set: (want) => {
-            if (want && !hasFS) {
-                el.requestFullscreen()
-            } else if (hasFS && !want) {
-                document.exitFullscreen()
-            }
-        }
+        set: setFS,
     })
 
 
     // stickiness via click handler
     el.addEventListener('click', ev => {
-        if (shell.stickyPointerLock && !hasPL) {
-            el.requestPointerLock()
-        }
-        if (shell.stickyFullscreen && !hasFS) {
-            el.requestFullscreen()
-        }
+        if (shell.stickyPointerLock && !hasPL) setPL(true)
+        if (shell.stickyFullscreen && !hasFS) setFS(true)
     })
 
 
