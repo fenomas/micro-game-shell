@@ -71,6 +71,7 @@ Events:
  * `onResize()` - fires when dom element changes size
  * `onPointerLockChanged(hasPL)` - fires on gaining/losing pointerLock
  * `onFullscreenChanged(hasFS)` - fires on gaining/losing fullscreen
+ * `onPointerLockerror(err)` - fires when pointerLock is refused by the browser
 
 
 ----

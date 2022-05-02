@@ -31,6 +31,7 @@ export class MicroGameShell {
         this.onResize = function () { }
         this.onPointerLockChanged = function (hasPL) { }
         this.onFullscreenChanged = function (hasFS) { }
+        this.onPointerLockerror = function (err) { }
 
         // init
         domReady(() => {
@@ -122,7 +123,12 @@ function setupDomElement(shell, el) {
     var setPL = (want) => {
         if (!el.requestPointerLock) return
         if (!!want === hasPL) return
-        if (want) { el.requestPointerLock() }
+        if (want) {
+            var prom = el.requestPointerLock()
+            if (prom.catch) prom.catch(err => {
+                if (shell.onPointerLockerror) shell.onPointerLockerror(err)
+            })
+        }
         else { document.exitPointerLock() }
     }
     var setFS = (want) => {
