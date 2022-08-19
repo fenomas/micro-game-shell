@@ -132,10 +132,20 @@ function setupDomElement(shell, el) {
         }
     }
     var setFS = (want) => {
-        if (!el.requestFullscreen) return
         if (!!want === hasFS) return
-        if (want) { el.requestFullscreen() }
-        else { document.exitFullscreen() }
+        if (want) {
+            if (el.requestFullscreen) {
+                el.requestFullscreen()
+            } else if (el.webkitRequestFullscreen) {
+                el.webkitRequestFullscreen()
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen()
+            } else if (document['webkitExitFullscreen']) {
+                document['webkitExitFullscreen']()
+            }
+        }
     }
 
     // track whether we actually have PL/FS, and send events
