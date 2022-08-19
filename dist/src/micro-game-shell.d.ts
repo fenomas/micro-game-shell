@@ -12,5 +12,5 @@ export class MicroGameShell {
     onResize: () => void;
     onPointerLockChanged: (hasPL: any) => void;
     onFullscreenChanged: (hasFS: any) => void;
-    onPointerLockerror: (err: any) => void;
+    onPointerLockError: (err: any) => void;
 }
