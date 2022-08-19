@@ -31,7 +31,7 @@ export class MicroGameShell {
         this.onResize = function () { }
         this.onPointerLockChanged = function (hasPL) { }
         this.onFullscreenChanged = function (hasFS) { }
-        this.onPointerLockerror = function (err) { }
+        this.onPointerLockError = function (err) { }
 
         // init
         domReady(() => {
@@ -124,12 +124,12 @@ function setupDomElement(shell, el) {
         if (!el.requestPointerLock) return
         if (!!want === hasPL) return
         if (want) {
-            var prom = el.requestPointerLock()
-            if (prom.catch) prom.catch(err => {
-                if (shell.onPointerLockerror) shell.onPointerLockerror(err)
+            // chrome returns a promise here, others don't
+            var res = el.requestPointerLock()
+            if (res && res.catch) res.catch(err => {
+                // error already handled in `pointerlockerror`
             })
         }
-        else { document.exitPointerLock() }
     }
     var setFS = (want) => {
         if (!el.requestFullscreen) return
@@ -146,6 +146,9 @@ function setupDomElement(shell, el) {
     document.addEventListener('fullscreenchange', ev => {
         hasFS = (document.fullscreenElement === el)
         shell.onFullscreenChanged(hasFS)
+    })
+    document.addEventListener('pointerlockerror', err => {
+        shell.onPointerLockError(err)
     })
 
 

@@ -103,6 +103,17 @@ shell.onRender = (dt, framePart, tickTime) => {
 var debounce = rate => Math.ceil(rate / 5)
 
 
+shell.onPointerLockChanged = (hasPL) => {
+    console.log(hasPL ? 'Gained' : 'Lost', 'pointerLock')
+}
+shell.onFullscreenChanged = (hasFS) => {
+    console.log(hasFS ? 'Gained' : 'Lost', 'fullScreen')
+}
+shell.onPointerLockError = (err) => {
+    console.log('PointerLock error:', err)
+}
+
+
 var log = false
 document.addEventListener('keydown', ev => {
     if (ev.key === 'p') log = !log
