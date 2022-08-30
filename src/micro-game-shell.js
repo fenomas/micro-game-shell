@@ -117,11 +117,11 @@ function frameHandler(shell) {
 
 function setupDomElement(shell, el) {
     if (!el) return
-
     var hasPL = false
     var hasFS = false
+
     var setPL = (want) => {
-        if (!el.requestPointerLock) return
+        hasPL = (el === document.pointerLockElement)
         if (!!want === hasPL) return
         if (want) {
             // chrome returns a promise here, others don't
@@ -129,9 +129,12 @@ function setupDomElement(shell, el) {
             if (res && res.catch) res.catch(err => {
                 // error already handled in `pointerlockerror`
             })
+        } else {
+            document.exitPointerLock()
         }
     }
     var setFS = (want) => {
+        hasFS = (el === document.fullscreenElement)
         if (!!want === hasFS) return
         if (want) {
             if (el.requestFullscreen) {
@@ -150,14 +153,15 @@ function setupDomElement(shell, el) {
 
     // track whether we actually have PL/FS, and send events
     document.addEventListener('pointerlockchange', ev => {
-        hasPL = (document.pointerLockElement === el)
+        hasPL = (el === document.pointerLockElement)
         shell.onPointerLockChanged(hasPL)
     })
     document.addEventListener('fullscreenchange', ev => {
-        hasFS = (document.fullscreenElement === el)
+        hasFS = (el === document.fullscreenElement)
         shell.onFullscreenChanged(hasFS)
     })
     document.addEventListener('pointerlockerror', err => {
+        hasPL = (el === document.pointerLockElement)
         shell.onPointerLockError(err)
     })
 
@@ -175,8 +179,8 @@ function setupDomElement(shell, el) {
 
     // stickiness via click handler
     el.addEventListener('click', ev => {
-        if (shell.stickyPointerLock && !hasPL) setPL(true)
-        if (shell.stickyFullscreen && !hasFS) setFS(true)
+        if (shell.stickyPointerLock) setPL(true)
+        if (shell.stickyFullscreen) setFS(true)
     })
 
 
