@@ -1,4 +1,6 @@
 
+// @ts-check
+
 /*
  * 
  *          setup
@@ -7,12 +9,13 @@
 
 
 
-import { MicroGameShell } from '..'
+import { MicroGameShell } from '../src/micro-game-shell'
 var $ = document.querySelector.bind(document)
 
 var domElement = $('.game')
-var pollRate = 15
+var pollRate = 10
 var shell = new MicroGameShell(domElement, pollRate)
+window['shell'] = shell
 
 var wasteTimeTick = 0
 var wasteTimeRender = 0
@@ -33,6 +36,7 @@ setupInput('#FS', val => { shell.stickyFullscreen = val })
 
 setupInput('#TR', val => { shell.tickRate = val })
 setupInput('#MRR', val => { shell.maxRenderRate = val })
+setupInput('#MTT', val => { shell.maxTickTime = val })
 
 setupInput('#WTT', val => { wasteTimeTick = val })
 setupInput('#WTR', val => { wasteTimeRender = val })
@@ -51,10 +55,10 @@ function setupInput(id, handler) {
 }
 
 
-$('.spike').onclick = function () {
-    var t = performance.now() + 500
-    while (performance.now() < t) { }
-}
+$('.spike').onclick = () => sleep(500)
+
+
+
 
 
 
@@ -77,10 +81,9 @@ shell.onTick = (tickTime) => {
     var rate = tickTimer()
     if (--tickUpdate === 0) {
         $('#OTR').textContent = Math.round(rate)
-        tickUpdate = debounce(rate)
+        tickUpdate = Math.ceil(rate / 5)
     }
-    var tgt = performance.now() + wasteTimeTick
-    while (performance.now() < tgt) { }
+    sleep(wasteTimeTick)
 }
 
 var renderTimer = makeTimer()
@@ -88,19 +91,20 @@ var renderUpdate = 1
 shell.onRender = (dt, framePart, tickTime) => {
     if (log) {
         var msIn = framePart * tickTime
-        console.log('render', 'dt', dt, 'part', framePart, 'ms in:', msIn)
+        console.log('render', 'dt', dt.toFixed(2),
+            '   part', framePart.toFixed(2),
+            '   ms in:', msIn.toFixed(2))
     }
     renderOutput(framePart, tickTime)
     var rate = renderTimer()
     if (--renderUpdate === 0) {
         $('#OFR').textContent = Math.round(rate)
-        renderUpdate = debounce(rate)
+        renderUpdate = Math.ceil(rate / 5)
     }
-    var tgt = performance.now() + wasteTimeRender
-    while (performance.now() < tgt) { }
+    sleep(wasteTimeRender)
 }
 
-var debounce = rate => Math.ceil(rate / 5)
+
 
 
 shell.onPointerLockChanged = (hasPL) => {
@@ -193,7 +197,7 @@ var drawBox = (x, y, w, h) => {
 function makeTimer() {
     var last = 0
     var avg = 10
-    var moving = 0.95
+    var moving = 0.9
     return () => {
         var now = performance.now()
         var dt = now - last
@@ -203,3 +207,7 @@ function makeTimer() {
     }
 }
 
+function sleep(n = 0) {
+    var t = performance.now()
+    while (performance.now() <= t + n) { }
+}
