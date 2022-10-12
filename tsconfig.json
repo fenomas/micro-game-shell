@@ -4,13 +4,11 @@
         "src/micro-game-shell.js",
     ],
     "compilerOptions": {
-        // output
         "outDir": "./dist",
         "target": "es5",
         "declaration": true,
         "emitDeclarationOnly": true,
         "rootDir": ".",
-        // settings
         "allowJs": true,
         "checkJs": true,
         "resolveJsonModule": true,
