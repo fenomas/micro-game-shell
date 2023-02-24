@@ -120,6 +120,12 @@ function setupTimers(shell) {
 
 /** 
  * RAF handler - triggers render events
+ * 
+ * Note to self: it's currently unavoidable that calling RAF creates spam
+ * in stack traces in chrome devtools. Only workaround is to disable
+ * "async stack traces" in devtools settings.
+ * See: http://bugs.chromium.org/p/chromium/issues/detail?id=120186
+ * 
  * @param {MicroGameShell} shell
 */
 function frameHandler(shell) {
